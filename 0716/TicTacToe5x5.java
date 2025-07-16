@@ -17,9 +17,9 @@ public class TicTacToe5x5 {
             int row = scanner.nextInt();
             int col = scanner.nextInt();
 
-            // 檢查輸入合法性
+            // 輸入合法性判斷
             if (!isValidMove(row, col)) {
-                System.out.println("輸入錯誤：請輸入 0-4 之間的空格位置！");
+                System.out.println("輸入錯誤：請輸入 0~4 的空格位置！");
                 continue;
             }
 
@@ -28,7 +28,7 @@ public class TicTacToe5x5 {
             System.out.printf("玩家 %c 在位置 (%d, %d) 放置棋子\n", currentPlayer, row, col);
             printBoard();
 
-            // 勝負判定
+            // 勝負檢查
             if (checkWin(currentPlayer)) {
                 System.out.printf("玩家 %c 獲勝！\n", currentPlayer);
                 gameEnded = true;
@@ -36,7 +36,6 @@ public class TicTacToe5x5 {
                 System.out.println("平手！");
                 gameEnded = true;
             } else {
-                // 換玩家
                 currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
             }
         }
@@ -44,84 +43,57 @@ public class TicTacToe5x5 {
         scanner.close();
     }
 
-    // 初始化棋盤
+    // 初始化棋盤為 '.'
     static void initializeBoard() {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
                 board[i][j] = '.';
-            }
-        }
     }
 
-    // 列印棋盤
+    // 顯示棋盤含索引
     static void printBoard() {
         System.out.print("  ");
-        for (int i = 0; i < SIZE; i++) {
-            System.out.print(i + " ");
-        }
+        for (int j = 0; j < SIZE; j++)
+            System.out.print(j + " ");
         System.out.println();
         for (int i = 0; i < SIZE; i++) {
             System.out.print(i + " ");
-            for (int j = 0; j < SIZE; j++) {
+            for (int j = 0; j < SIZE; j++)
                 System.out.print(board[i][j] + " ");
-            }
             System.out.println();
         }
     }
 
-    // 判斷輸入是否合法
+    // 檢查是否為合法落子位置
     static boolean isValidMove(int row, int col) {
         return row >= 0 && row < SIZE && col >= 0 && col < SIZE && board[row][col] == '.';
     }
 
-    // 判斷是否有勝利條件
+    // 判斷是否連續 5 個相同符號
     static boolean checkWin(char player) {
-        // 檢查行
         for (int i = 0; i < SIZE; i++) {
-            boolean win = true;
             for (int j = 0; j < SIZE; j++) {
-                if (board[i][j] != player) {
-                    win = false;
-                    break;
-                }
-            }
-            if (win) return true;
-        }
-
-        // 檢查列
-        for (int j = 0; j < SIZE; j++) {
-            boolean win = true;
-            for (int i = 0; i < SIZE; i++) {
-                if (board[i][j] != player) {
-                    win = false;
-                    break;
-                }
-            }
-            if (win) return true;
-        }
-
-        // 檢查主對角線
-        boolean win = true;
-        for (int i = 0; i < SIZE; i++) {
-            if (board[i][i] != player) {
-                win = false;
-                break;
+                if (checkDirection(i, j, 0, 1, player)) return true; // →
+                if (checkDirection(i, j, 1, 0, player)) return true; // ↓
+                if (checkDirection(i, j, 1, 1, player)) return true; // ↘
+                if (checkDirection(i, j, 1, -1, player)) return true; // ↙
             }
         }
-        if (win) return true;
-
-        // 檢查反對角線
-        win = true;
-        for (int i = 0; i < SIZE; i++) {
-            if (board[i][SIZE - 1 - i] != player) {
-                win = false;
-                break;
-            }
-        }
-        return win;
+        return false;
     }
 
-    // 判斷是否平手
+    // 往某一方向檢查是否連續5個相同符號
+    static boolean checkDirection(int x, int y, int dx, int dy, char player) {
+        for (int i = 0; i < 5; i++) {
+            int nx = x + i * dx;
+            int ny = y + i * dy;
+            if (nx < 0 || nx >= SIZE || ny < 0 || ny >= SIZE || board[nx][ny] != player)
+                return false;
+        }
+        return true;
+    }
+
+    // 判斷棋盤是否已滿
     static boolean isBoardFull() {
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
@@ -130,4 +102,3 @@ public class TicTacToe5x5 {
         return true;
     }
 }
-
